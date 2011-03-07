@@ -8,12 +8,16 @@
  */
 package com.koocode.android.titanium;
 
+import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 
 import org.appcelerator.titanium.TiContext;
+import org.appcelerator.titanium.kroll.KrollCallback;
 import org.appcelerator.titanium.util.Log;
 import org.appcelerator.titanium.util.TiConfig;
+
+import java.util.HashMap;
 
 @Kroll.module(name="Koocodetest", id="com.koocode.android.titanium")
 public class KoocodetestModule extends KrollModule
@@ -30,11 +34,25 @@ public class KoocodetestModule extends KrollModule
 		super(tiContext);
 	}
 
+  @Kroll.method
+	public String example() {
+    Log.d(LCAT, "example called");
+    return "hello koocode user by module";
+  }
+
 	// Methods
 	@Kroll.method
-	public String example() {
-		Log.d(LCAT, "example called");
-		return "hello koocode user by module";
+	public void testMethod(final Object[] args) {
+		Log.d(LCAT, "testMethod called");
+    final KrollDict options = (KrollDict) args[0];
+    final KrollCallback successCallback = getCallback(options, "success");
+    //final KrollCallback cancelCallback = getCallback(options, "cancel");
+    //final KrollCallback errorCallback = getCallback(options, "error");
+    final KrollDict dict = new KrollDict();
+    dict.put("result", "myresult");
+    Log.d(LCAT, "before callback");
+    successCallback.callAsync(dict);
+    Log.d(LCAT, "after callback");
 	}
 	
 	// Properties
@@ -50,4 +68,12 @@ public class KoocodetestModule extends KrollModule
 		Log.d(LCAT, "set example property: " + value);
 	}
 
+  private KrollCallback getCallback(final KrollDict options, final String name) {
+    if (options.containsKey(name)) {
+      return (KrollCallback) options.get(name);
+    } else {
+      Log.d(LCAT, "Callback not found: " + name);
+      return null;
+    }
+  }
 }
