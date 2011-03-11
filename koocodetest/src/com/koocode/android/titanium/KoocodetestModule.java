@@ -9,6 +9,7 @@
 package com.koocode.android.titanium;
 
 import org.appcelerator.kroll.KrollDict;
+import org.appcelerator.kroll.KrollInvocation;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 
@@ -16,6 +17,7 @@ import org.appcelerator.titanium.TiContext;
 import org.appcelerator.titanium.kroll.KrollCallback;
 import org.appcelerator.titanium.util.Log;
 import org.appcelerator.titanium.util.TiConfig;
+import org.appcelerator.titanium.util.TiRHelper;
 
 import java.util.HashMap;
 
@@ -42,8 +44,17 @@ public class KoocodetestModule extends KrollModule
 
 	// Methods
 	@Kroll.method
-	public void testMethod(final Object[] args) {
+	public void testMethod(final KrollInvocation invocation, final Object[] args) {
 		Log.d(LCAT, "testMethod called");
+
+    try {
+      int id = TiRHelper.getResource("string.mymsg");
+      Log.d(LCAT, "id is:" + id);
+      Log.d(LCAT, "the values is:" +
+              invocation.getTiContext().getActivity().getString(TiRHelper.getResource("string.mymsg")));
+    } catch (TiRHelper.ResourceNotFoundException e) {
+      Log.d(LCAT, "TIRHellper error");
+    }
     final KrollDict options = (KrollDict) args[0];
     final KrollCallback successCallback = getCallback(options, "success");
     //final KrollCallback cancelCallback = getCallback(options, "cancel");
